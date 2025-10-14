@@ -1,9 +1,7 @@
 name: CI
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+  push: { branches: [ "main" ] }
+  pull_request: { branches: [ "main" ] }
 jobs:
   lint:
     runs-on: windows-latest
@@ -11,9 +9,10 @@ jobs:
       - uses: actions/checkout@v4
       - name: Install PSScriptAnalyzer
         shell: pwsh
-        run: |
-          Install-Module PSScriptAnalyzer -Scope CurrentUser -Force
-      - name: Lint src
+        run: Install-Module PSScriptAnalyzer -Scope CurrentUser -Force
+      - name: Lint src (fail only on errors)
         shell: pwsh
         run: |
-          Invoke-ScriptAnalyzer -Path src -Recurse -EnableExit -Severity Information,Warning,Error
+          $results = Invoke-ScriptAnalyzer -Path src -Recurse -Severity Information,Warning,Error
+          $results | Format-Table
+          if (($results | Where-Object Severity -eq 'Error')) { exit 1 } else { exit 0 }
