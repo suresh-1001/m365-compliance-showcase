@@ -1,0 +1,7 @@
+Reports/
+*.ps1xml
+*.psd1.user
+*.log
+.vscode/
+.idea/
+.DS_Store

@@ -1,0 +1,21 @@
+name: CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up PowerShell
+        uses: PowerShell/PowerShell@v1
+        with:
+          powerShellVersion: '7.4.x'
+      - name: Install PSScriptAnalyzer
+        run: pwsh -c "Install-Module PSScriptAnalyzer -Scope CurrentUser -Force"
+      - name: Lint src
+        run: pwsh -c "Invoke-ScriptAnalyzer -Path src -Recurse -EnableExit -Severity Information,Warning,Error"
